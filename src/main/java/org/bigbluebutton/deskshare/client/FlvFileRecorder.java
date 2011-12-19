@@ -53,10 +53,12 @@ public class FlvFileRecorder {
         private File file;
         private String filename;
         private boolean firstTime = true;
+        private FlvFileStreamer fileStreamer;
 
         private final Executor recorderExec = Executors.newSingleThreadExecutor();
         private Runnable recorderRunner;
         private volatile boolean startRecording = false;
+        private String currentFileName;
 
 
 	public FlvFileRecorder(){
@@ -67,6 +69,9 @@ public class FlvFileRecorder {
     	try {
     		//fo = new FileOutputStream("D://temp/" + "ScreenVideo4.flv");
                 createDir(new File(DIRNAME));
+
+                fileStreamer = new FlvFileStreamer(dir);
+                fileStreamer.initialize();
 
                 createFile();
                 /*
@@ -117,7 +122,8 @@ public class FlvFileRecorder {
                 //createDir(new File(DIRNAME));
                 Date now = new Date();
 		long timestamp = now.getTime();
-                filename = dir.toString() + File.separator  + timestamp + ".flv";
+                currentFileName = timestamp + ".flv";
+                filename = dir.toString() + File.separator  + currentFileName;
 
                // fo = new FileOutputStream("C://blueRascal/"+"ScreenVideo.flv");
                 file = new File(filename);
@@ -133,6 +139,7 @@ public class FlvFileRecorder {
     	try {
     		System.out.println("Closing File");
 			fo.close();
+                        fileStreamer.putFileName(currentFileName);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -161,10 +168,15 @@ public class FlvFileRecorder {
                
     		System.out.println("Closing File stream");
 			fo.close();
+                        fileStreamer.putFileName(currentFileName);
+                        fileStreamer.finalizeStreaming();
+
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}
+
+
 
 	public void record(ByteArrayOutputStream frame) {
 		saveToFile(frame);
@@ -204,7 +216,7 @@ public class FlvFileRecorder {
          *
          * A method that streams audio file after the recording is completed.
          * The audio file is deleted from the client machine afterward.
-         */
+         
         public void streamVideoFile(){
 
             System.out.println("Streaming video file");
@@ -213,7 +225,8 @@ public class FlvFileRecorder {
 		//file.delete();
 		System.out.println("Finishing  video Streaming()");
 
-        }
+        }*/
+
         public static boolean deleteDir(String strFile) {
 		// Declare variables variables
 		File fDir = new File(strFile);

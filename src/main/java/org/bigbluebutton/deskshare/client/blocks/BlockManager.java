@@ -48,11 +48,11 @@ public class BlockManager {
     private int frameCount = 0;
     private int fileFrameCount = 0;
     
-    private FlvFileRecorder fileCapture;
+    private FlvFileRecorder fileRecorder;
     
     public BlockManager() {
     	blocksMap = new HashMap<Integer, Block>();
-        fileCapture = new FlvFileRecorder();
+        fileRecorder = new FlvFileRecorder();
     }
     
     public void initialize(Dimension screen, Dimension tile) {
@@ -61,7 +61,7 @@ public class BlockManager {
 
     	/** Initialize the recorder **/
     	try {
-            fileCapture.init();
+            fileRecorder.init();
             //fileCapture.start();
         } catch (Exception e) {
             e.printStackTrace();
@@ -112,8 +112,8 @@ public class BlockManager {
      public void stopSavingFrameToFile() {
         sendCapturedScreen = false;
         //fileCapture.stopRecording();
-        fileCapture.stop();
-        fileCapture.streamVideoFile();
+        fileRecorder.stop();
+        //fileRecorder.streamVideoFile();
         
     }
 
@@ -134,7 +134,7 @@ public class BlockManager {
     	frameCount ++;
         fileFrameCount ++;
 
-        fileCapture.record(generateFrame(keyFrame), newFile);
+        fileRecorder.record(generateFrame(keyFrame), newFile);
 
     }
 
